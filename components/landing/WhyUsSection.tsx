@@ -34,13 +34,13 @@ export default function WhyUsSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {features.map((item, index) => (
             <AnimatedText key={index} variant="slide-up" delay={index * 90} duration={900}>
-              <div className="group p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-[#fcd839]/50 transition-all duration-300 flex flex-col items-center text-center">
+              <div className="h-full flex flex-col group p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-[#fcd839]/50 transition-all duration-300 flex flex-col items-center text-center">
                 <div className="mb-6 p-4 rounded-full bg-white/5 border border-white/10 group-hover:border-[#fcd839] group-hover:text-[#fcd839] transition-colors">
                   <item.icon className="w-8 h-8 text-white group-hover:text-[#fcd839]" />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4">{item.title}</h3>
               {/* התיקון: קופסה עם גובה קבוע של 120 פיקסל */}
-                <div className="min-h-[120px] flex items-center justify-center w-full mt-2">
+             <div className="flex-1 flex items-end justify-center w-full mt-2">
                   <p className="text-gray-400 group-hover:text-gray-200 transition-colors text-center">
                     {item.description}
                   </p>
