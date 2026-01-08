@@ -32,7 +32,7 @@ export default function HighlightsSection() {
                   {highlight.title}
                 </h3>
                 
-                <p className="text-sm sm:text-base text-gray-300 group-hover:text-gray-100 leading-relaxed transition-colors">
+                <p className="min-h-[60px] text-sm sm:text-base text-gray-300 group-hover:text-gray-100 leading-relaxed transition-colors">
                   {highlight.description}
                 </p>
               </div>
