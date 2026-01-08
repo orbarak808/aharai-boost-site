@@ -24,16 +24,20 @@ export default function HighlightsSection() {
                 key={highlight.title}
                 className="h-full group rounded-2xl p-6 text-center bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 hover:border-[#fcd839] transition-all duration-300 flex flex-col items-center"
               >
-                <div className="w-14 h-14 rounded-full bg-[#fcd839]/10 border border-white/10 group-hover:border-[#fcd839]/50 flex items-center justify-center mb-6 transition-colors">
+                <div className="w-14 h-14 rounded-full bg-[#fcd839]/10 border border-white/10 group-hover:border-[#fcd839]/50 flex items-center justify-center mb-6 transition-colors shrink-0">
                   <IconComponent className="w-7 h-7 text-white group-hover:text-[#fcd839] transition-colors" />
                 </div>
 
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-3">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 shrink-0">
                   {highlight.title}
                 </h3>
 
-<p className="h-[90px] flex items-center justify-center text-sm sm:text-base text-gray-300 group-hover:text-gray-100 leading-relaxed transition-colors">                  {highlight.description}
-                </p>
+                {/* כאן התיקון הגדול: גובה מינימלי של 120 פיקסל שמיישר הכל */}
+                <div className="min-h-[120px] flex items-center justify-center w-full">
+                  <p className="text-sm sm:text-base text-gray-300 group-hover:text-gray-100 leading-relaxed transition-colors">
+                    {highlight.description}
+                  </p>
+                </div>
               </div>
             );
           })}
