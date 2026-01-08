@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n/useI18n";
 import { LeadFormSchema, type LeadFormParsed } from "@/lib/leads/schema";
 import { toast } from "sonner";
-import { submitLead } from "@/app/actions/submitLead";
 import { AsYouType } from "libphonenumber-js";
 import {
   Select,
@@ -26,6 +25,30 @@ type LeadFormState = {
 };
 
 type FieldErrors = Partial<Record<keyof LeadFormState, string>>;
+
+type ApiRegisterLeadResult =
+  | { ok: true; saved: true; emailSent: boolean }
+  | { ok: true; saved: false; emailSent: false } // honeypot
+  | { ok: false; error: "validation"; fieldErrors: Record<string, string[]> }
+  | { ok: false; error: "db" | "unknown" };
+
+async function registerLead(
+  payload: LeadFormParsed
+): Promise<ApiRegisterLeadResult> {
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  const json = (await res
+    .json()
+    .catch(() => null)) as ApiRegisterLeadResult | null;
+  if (!json || typeof (json as any).ok !== "boolean") {
+    return { ok: false, error: "unknown" };
+  }
+  return json;
+}
 
 export default function CTASection() {
   const { m } = useI18n();
@@ -89,7 +112,7 @@ export default function CTASection() {
 
     try {
       setStatus("submitting");
-      const res = await submitLead(formData);
+      const res = await registerLead(parsed.data);
 
       if (!res.ok) {
         if (res.error === "validation") {
@@ -126,7 +149,7 @@ export default function CTASection() {
       setFormData({
         fullName: "",
         email: "",
-        phone: "",
+        phone: "+1 ",
         age: "",
         state: "",
         website: ""
