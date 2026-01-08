@@ -42,3 +42,4 @@ export default function HighlightsSection() {
       </div>
     </section>
   );
+}
