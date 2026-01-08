@@ -61,9 +61,6 @@ export default function Home() {
 
       <ProgramTimeline />
 
-      <AnimatedDivBreathing>
-       {/* <HighlightsSection /> */}
-      </AnimatedDivBreathing>
 
       <SafetySection />
 
