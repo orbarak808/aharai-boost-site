@@ -22,7 +22,7 @@ export default function HighlightsSection() {
             return (
               <div
                 key={highlight.title}
-                className="group rounded-2xl p-6 text-center bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 hover:border-[#fcd839]/40 transition-all duration-300"
+                className="h-full group rounded-2xl p-6 text-center bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 hover:border-[#fcd839]/40 transition-all duration-300"
               >
                 <div className="w-14 h-14 rounded-full bg-[#fcd839]/10 border border-white/10 group-hover:border-[#fcd839]/50 flex items-center justify-center mb-4 mx-auto transition-colors">
                   <IconComponent className="w-7 h-7 text-white group-hover:text-[#fcd839] transition-colors" />
