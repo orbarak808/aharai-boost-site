@@ -3,12 +3,29 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+  }
+
   body {
     @apply bg-ui-cream text-ui-night;
   }
-  
-  h1, h2 {
+
+  h1,
+  h2 {
     @apply text-brand-forest;
   }
 }
 
+/* Hide number input spinners (Chrome/Safari/Edge) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide number input spinners (Firefox) */
+input[type="number"] {
+  -moz-appearance: textfield;
+}

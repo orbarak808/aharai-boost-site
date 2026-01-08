@@ -1,31 +1,23 @@
 "use client";
 
 import { Shield, Users, Utensils } from "lucide-react";
+import { useI18n } from "@/lib/i18n/useI18n";
 
-const features = [
-  {
-    icon: Shield,
-    title: "Safety First",
-    description: "24/7 situation room and comprehensive safety protocols.",
-  },
-  {
-    icon: Users,
-    title: "Our Team",
-    description: "Israel's finest youth leaders and mentors.",
-  },
-  {
-    icon: Utensils,
-    title: "The Full Package",
-    description: "Kosher food, logistics, and all accommodations included.",
-  },
-];
+const icons = [Shield, Users, Utensils];
 
 export default function PeaceOfMindSection() {
+  const { m } = useI18n();
+
+  const features = m.peaceOfMind.features.map((feature, index) => ({
+    ...feature,
+    icon: icons[index],
+  }));
+
   return (
     <section className="w-full bg-ui-cream py-16 sm:py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-brand-forest text-center mb-12 sm:mb-16">
-          Uncompromising Standards of Safety & Quality
+          {m.peaceOfMind.heading}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">

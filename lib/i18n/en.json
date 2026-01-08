@@ -1,0 +1,254 @@
+{
+  "meta": {
+    "title": "Aharai! Boost - The Summer of a Lifetime",
+    "description": "Join the Founding Cohort of Aharai! Boost: A unique 6-week journey in Israel that blends epic travel with deep leadership training."
+  },
+  "navbar": {
+    "links": {
+      "spirit": "The Spirit",
+      "journey": "The Journey",
+      "safety": "Safety",
+      "about": "About"
+    },
+    "applyNow": "Apply Now",
+    "logoAlt": "Aharai Boost Logo",
+    "aria": {
+      "instagram": "Instagram",
+      "email": "Email",
+      "toggleMenu": "Toggle Menu"
+    }
+  },
+  "hero": {
+    "titleLines": ["The Summer of a", "Lifetime."],
+    "tagline": "Body - Mind - Land",
+    "descriptionLines": [
+      "The ultimate summer experience for those who want more than just a vacation.",
+      "A journey of resilience, identity, and unforgettable bonds."
+    ],
+    "metaLine": "6 Weeks | Summer 2026 | North American & Israeli Teens United",
+    "cta": "Apply for the Founding Cohort"
+  },
+  "whyUs": {
+    "headingLine1": "The 'Aharai!' Spirit:",
+    "headingHighlight": "The Ultimate Summer Adventure.",
+    "subheading": "Disconnect from screens, reconnect to potential. 100% Fun. 100% Meaning.",
+    "features": [
+      {
+        "title": "Epic Nature & Outdoors",
+        "description": "Explore Israel's stunning landscapes through unforgettable adventures."
+      },
+      {
+        "title": "Practical Leadership Training",
+        "description": "Develop real-world leadership skills through hands-on challenges."
+      },
+      {
+        "title": "Immersive Culture & Heritage",
+        "description": "Connect deeply with Jewish history and Israeli culture."
+      },
+      {
+        "title": "Meaningful Social Impact",
+        "description": "Make a real difference by volunteering with local communities."
+      }
+    ]
+  },
+  "programTimeline": {
+    "heading": "The Journey: From Tourist to Leader",
+    "subheading": "6 weeks designed to challenge, connect, and build you.",
+    "weeks": [
+      {
+        "week": "WEEK 1",
+        "title": "The Foundation",
+        "description": "Strangers become family. Building the 'tribe' through trust, team challenges, and creating a home base."
+      },
+      {
+        "week": "WEEK 2",
+        "title": "The Land",
+        "description": "Forget the bus window. We explore Israel's raw beauty and human mosaic through our feet, meeting the people who make this country beat."
+      },
+      {
+        "week": "WEEK 3",
+        "title": "The Spirit",
+        "description": "An immersive IDF experience. Understanding the values, the ethics, and the responsibility of defending a home. No filters."
+      },
+      {
+        "week": "WEEK 4",
+        "title": "The Grit",
+        "description": "Resilience Week. Survival skills, field navigation, and physical challenges designed to prove: You are stronger than you think."
+      },
+      {
+        "week": "WEEK 5",
+        "title": "The Voice",
+        "description": "Leadership & Advocacy. Master the art of storytelling. Learn to lead conversations and represent your truth with confidence."
+      },
+      {
+        "week": "WEEK 6",
+        "title": "The Launchpad",
+        "description": "Processing the journey and packing the mental tools you'll need for campus life and beyond."
+      }
+    ]
+  },
+  "highlights": {
+    "items": [
+      {
+        "title": "Epic Nature & Outdoors",
+        "description": "Explore Israel's stunning landscapes through unforgettable adventures."
+      },
+      {
+        "title": "Practical Leadership Training",
+        "description": "Develop real-world leadership skills that last a lifetime."
+      },
+      {
+        "title": "Immersive Culture & Heritage",
+        "description": "Connect deeply with Jewish history and Israeli culture."
+      },
+      {
+        "title": "Meaningful Social Impact",
+        "description": "Make a difference in local communities during your journey."
+      }
+    ]
+  },
+  "safety": {
+    "headingPrefix": "Uncompromising Standards of",
+    "headingHighlight": "Safety & Quality",
+    "cards": [
+      {
+        "title": "Safety First",
+        "description": "A comprehensive security array, 24/7 situation room, and full coordination with all security authorities."
+      },
+      {
+        "title": "Our Team",
+        "description": "Israel's finest counselors. Mature, experienced, and trained to lead educational processes with sensitivity."
+      },
+      {
+        "title": "The Full Package",
+        "description": "We take care of every detail - from nutritious, Kosher food tailored to individual needs, to meticulous logistics."
+      }
+    ]
+  },
+  "about": {
+    "headingLine1": "Powered by Israel’s",
+    "headingHighlight": "Leading Youth Organization",
+    "paragraph1": {
+      "beforeStrong": "For 29 years, ",
+      "strong": "Aharai!",
+      "afterStrong": " has led Israeli youth to peaks of leadership and social impact in 144 municipalities across the country."
+    },
+    "paragraph2": {
+      "beforeHighlight": "We serve more than ",
+      "highlight": "10,000 youth group participants",
+      "afterHighlight": " every year."
+    },
+    "paragraph3": "Now, we are bringing our experience, heart, and professionalism to the Diaspora youth, to build the next generation of Jewish leadership - together.",
+    "linkText": "Visit main website (aharai.org.il) →",
+    "videoTitle": "Aharai Video"
+  },
+  "cta": {
+    "heading": "Space is limited for the Founding Cohort (Summer 2026).",
+    "subheading": "Don't wait. Interviews for the program are starting soon.",
+    "successAlert": "Thank you! We will be in touch soon.",
+    "errorAlert": "Something went wrong. Please try again.",
+    "form": {
+      "placeholders": {
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone",
+        "age": "Age",
+        "state": "State"
+      },
+      "submit": "Send Me Details",
+      "submitting": "Submitting..."
+    }
+  },
+  "footerCta": {
+    "heading": "Space is limited for the Founding Cohort (Summer 2026)",
+    "subheading": "Don't wait. Interviews are starting soon.",
+    "form": {
+      "labels": {
+        "fullName": "Full Name *",
+        "email": "Email *",
+        "phone": "Phone Number *",
+        "age": "Participant's Age *",
+        "state": "State *"
+      },
+      "placeholders": {
+        "fullName": "John Doe",
+        "email": "john@example.com",
+        "phone": "(555) 123-4567",
+        "age": "16"
+      },
+      "selectStatePlaceholder": "Select a state",
+      "submit": "Send Me Details"
+    }
+  },
+  "peaceOfMind": {
+    "heading": "Uncompromising Standards of Safety & Quality",
+    "features": [
+      {
+        "title": "Safety First",
+        "description": "24/7 situation room and comprehensive safety protocols."
+      },
+      {
+        "title": "Our Team",
+        "description": "Israel's finest youth leaders and mentors."
+      },
+      {
+        "title": "The Full Package",
+        "description": "Kosher food, logistics, and all accommodations included."
+      }
+    ]
+  },
+  "usStates": [
+    "Alabama",
+    "Alaska",
+    "Arizona",
+    "Arkansas",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "Delaware",
+    "Florida",
+    "Georgia",
+    "Hawaii",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Iowa",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Maine",
+    "Maryland",
+    "Massachusetts",
+    "Michigan",
+    "Minnesota",
+    "Mississippi",
+    "Missouri",
+    "Montana",
+    "Nebraska",
+    "Nevada",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "New York",
+    "North Carolina",
+    "North Dakota",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Rhode Island",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Vermont",
+    "Virginia",
+    "Washington",
+    "West Virginia",
+    "Wisconsin",
+    "Wyoming",
+    "District of Columbia",
+    "Other"
+  ]
+}

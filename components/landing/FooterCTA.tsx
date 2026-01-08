@@ -2,8 +2,10 @@
 
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { useI18n } from "@/lib/i18n/useI18n";
 
 export default function FooterCTA() {
+  const { m } = useI18n();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -26,26 +28,17 @@ export default function FooterCTA() {
     });
   };
 
-  const states = [
-    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
-    "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
-    "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
-    "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
-    "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
-    "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-    "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
-    "Wisconsin", "Wyoming", "District of Columbia", "Other"
-  ];
+  const states = m.usStates;
 
   return (
     <section className="w-full bg-brand-forest py-16 sm:py-20 lg:py-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
-            Space is limited for the Founding Cohort (Summer 2026)
+            {m.footerCta.heading}
           </h2>
           <p className="text-lg sm:text-xl text-white/90">
-            Don't wait. Interviews are starting soon.
+            {m.footerCta.subheading}
           </p>
         </div>
 
@@ -53,7 +46,7 @@ export default function FooterCTA() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-ui-night mb-2">
-                Full Name *
+                {m.footerCta.form.labels.fullName}
               </label>
               <input
                 type="text"
@@ -63,13 +56,13 @@ export default function FooterCTA() {
                 value={formData.fullName}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent outline-none transition"
-                placeholder="John Doe"
+                placeholder={m.footerCta.form.placeholders.fullName}
               />
             </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-ui-night mb-2">
-                Email *
+                {m.footerCta.form.labels.email}
               </label>
               <input
                 type="email"
@@ -79,13 +72,13 @@ export default function FooterCTA() {
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent outline-none transition"
-                placeholder="john@example.com"
+                placeholder={m.footerCta.form.placeholders.email}
               />
             </div>
 
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-ui-night mb-2">
-                Phone Number *
+                {m.footerCta.form.labels.phone}
               </label>
               <input
                 type="tel"
@@ -95,13 +88,13 @@ export default function FooterCTA() {
                 value={formData.phone}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent outline-none transition"
-                placeholder="(555) 123-4567"
+                placeholder={m.footerCta.form.placeholders.phone}
               />
             </div>
 
             <div>
               <label htmlFor="age" className="block text-sm font-medium text-ui-night mb-2">
-                Participant's Age *
+                {m.footerCta.form.labels.age}
               </label>
               <input
                 type="number"
@@ -113,13 +106,13 @@ export default function FooterCTA() {
                 value={formData.age}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent outline-none transition"
-                placeholder="16"
+                placeholder={m.footerCta.form.placeholders.age}
               />
             </div>
 
             <div className="sm:col-span-2">
               <label htmlFor="state" className="block text-sm font-medium text-ui-night mb-2">
-                State *
+                {m.footerCta.form.labels.state}
               </label>
               <select
                 id="state"
@@ -129,7 +122,7 @@ export default function FooterCTA() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent outline-none transition bg-white"
               >
-                <option value="">Select a state</option>
+                <option value="">{m.footerCta.form.selectStatePlaceholder}</option>
                 {states.map((state) => (
                   <option key={state} value={state}>
                     {state}
@@ -143,7 +136,7 @@ export default function FooterCTA() {
             type="submit"
             className="w-full bg-brand-red hover:bg-brand-red/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors duration-200 flex items-center justify-center gap-2 group"
           >
-            Send Me Details
+            {m.footerCta.form.submit}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
         </form>

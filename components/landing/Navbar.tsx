@@ -4,22 +4,25 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, Instagram, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const navLinks = [
-  { name: "The Spirit", href: "#spirit" },
-  { name: "The Journey", href: "#journey" },
-  { name: "Safety", href: "#safety" },
-  { name: "About", href: "#about" },
-];
-
-const socialLinks = {
-  instagram: "https://www.instagram.com/aharai.america?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw",
-  mail: "mailto:boost.america@aharai.org.il"
-};
+import { OUR_INSTAGRAM, getEmailLink } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n/useI18n";
 
 export default function Navbar() {
+  const { m } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const navLinks = [
+    { name: m.navbar.links.spirit, href: "#spirit" },
+    { name: m.navbar.links.journey, href: "#journey" },
+    { name: m.navbar.links.safety, href: "#safety" },
+    { name: m.navbar.links.about, href: "#about" }
+  ];
+
+  const socialLinks = {
+    instagram: OUR_INSTAGRAM,
+    mail: getEmailLink()
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -31,16 +34,16 @@ export default function Navbar() {
     <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
       scrolled ? 'bg-black/80 backdrop-blur-md py-2 border-b border-white/10' : 'bg-transparent py-4'
     }`}>
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center relative"> {/* הוספנו relative כדי שהמרכוז יעבוד */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center relative"> {/* הוספנו relative כדי שהמרכוז יעבוד */}
         
         {/* 1. צד שמאל: לוגו */}
         <Link href="/" className="relative z-10 flex items-center">
           <Image 
             src="/Transparent2.png" 
-            alt="Aharai Boost Logo" 
+            alt={m.navbar.logoAlt} 
             width={220}
             height={90}
-            className="w-auto h-20 md:h-24 object-contain"
+            className="w-auto h-14 sm:h-16 md:h-24 object-contain"
             priority
           />
         </Link>
@@ -63,10 +66,20 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4 z-10">
           {/* Social Icons */}
           <div className="flex items-center gap-3 border-r border-white/20 pr-4 mr-1">
-            <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#fcd839] transition-colors" aria-label="Instagram">
+            <a
+              href={socialLinks.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-[#fcd839] transition-colors"
+              aria-label={m.navbar.aria.instagram}
+            >
               <Instagram className="w-5 h-5" />
             </a>
-            <a href={socialLinks.mail} className="text-white hover:text-[#fcd839] transition-colors" aria-label="Email">
+            <a
+              href={socialLinks.mail}
+              className="text-white hover:text-[#fcd839] transition-colors"
+              aria-label={m.navbar.aria.email}
+            >
               <Mail className="w-5 h-5" />
             </a>
           </div>
@@ -76,7 +89,7 @@ export default function Navbar() {
             href="#apply"
             className="px-6 py-2.5 bg-[#fcd839] hover:bg-white text-black font-bold rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_15px_rgba(252,216,57,0.5)]"
           >
-            Apply Now
+            {m.navbar.applyNow}
           </Link>
         </div>
 
@@ -84,9 +97,9 @@ export default function Navbar() {
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden relative z-10 text-white p-2"
-          aria-label="Toggle Menu"
+          aria-label={m.navbar.aria.toggleMenu}
         >
-          {isOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+          {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
         </button>
       </div>
 
@@ -115,10 +128,20 @@ export default function Navbar() {
               <hr className="w-1/3 border-white/10 my-2" />
 
               <div className="flex items-center gap-6 mb-2">
-                <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 rounded-full text-white hover:text-[#fcd839] transition-colors">
+                <a
+                  href={socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 bg-white/10 rounded-full text-white hover:text-[#fcd839] transition-colors"
+                  aria-label={m.navbar.aria.instagram}
+                >
                   <Instagram className="w-6 h-6" />
                 </a>
-                <a href={socialLinks.mail} className="p-3 bg-white/10 rounded-full text-white hover:text-[#fcd839] transition-colors">
+                <a
+                  href={socialLinks.mail}
+                  className="p-3 bg-white/10 rounded-full text-white hover:text-[#fcd839] transition-colors"
+                  aria-label={m.navbar.aria.email}
+                >
                   <Mail className="w-6 h-6" />
                 </a>
               </div>
@@ -128,7 +151,7 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 className="mt-2 px-8 py-3 bg-[#fcd839] text-black font-bold rounded-full text-xl hover:bg-white transition-all w-3/4 text-center"
               >
-                Apply Now
+                {m.navbar.applyNow}
               </Link>
             </div>
           </motion.div>

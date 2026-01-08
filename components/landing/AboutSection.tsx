@@ -1,40 +1,43 @@
 "use client";
+import { AHARAI_MAIN_SITE_URL } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n/useI18n";
 
 export default function AboutSection() {
+  const { m } = useI18n();
   return (
-    <section id="about" className="w-full py-24 bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))] from-[#1c1917] via-[#0c0a09] to-black">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="about" className="w-full py-24 scroll-mt-24 bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))] from-[#1c1917] via-[#0c0a09] to-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
           {/* Left Side: Text Content */}
           <div className="space-y-8">
             <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight">
-              Powered by Israel’s <br />
-              <span className="text-[#fcd839]">Leading Youth Organization</span>
+              {m.about.headingLine1} <br />
+              <span className="text-[#fcd839]">{m.about.headingHighlight}</span>
             </h2>
             
-            <div className="space-y-6 text-lg text-gray-300 leading-relaxed">
+            <div className="space-y-6 text-base sm:text-lg text-gray-300 leading-relaxed">
               <p>
-                For 29 years, <strong className="text-white">Aharai!</strong> has led Israeli youth to peaks of 
-                leadership and social impact in 144 municipalities across the country.
+                {m.about.paragraph1.beforeStrong}
+                <strong className="text-white">{m.about.paragraph1.strong}</strong>
+                {m.about.paragraph1.afterStrong}
               </p>
               <p>
-                We serve more than <strong className="text-[#fcd839]">10,000 youth group participants</strong> every year.
+                {m.about.paragraph2.beforeHighlight}
+                <strong className="text-[#fcd839]">{m.about.paragraph2.highlight}</strong>
+                {m.about.paragraph2.afterHighlight}
               </p>
-              <p>
-                Now, we are bringing our experience, heart, and professionalism to the Diaspora youth, 
-                to build the next generation of Jewish leadership - together.
-              </p>
+              <p>{m.about.paragraph3}</p>
             </div>
 
             <div className="pt-4">
               <a 
-                href="https://aharai.org.il/" 
+                href={AHARAI_MAIN_SITE_URL}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-[#fcd839] hover:text-white transition-colors border-b border-[#fcd839] hover:border-white pb-1 font-medium"
               >
-                Visit main website (aharai.org.il) &rarr;
+                {m.about.linkText}
               </a>
             </div>
           </div>
@@ -44,7 +47,7 @@ export default function AboutSection() {
             <iframe 
               className="w-full h-full"
               src="https://www.youtube.com/embed/3C96XwCMuHA" 
-              title="Aharai Video"
+              title={m.about.videoTitle}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
               allowFullScreen
             ></iframe>
