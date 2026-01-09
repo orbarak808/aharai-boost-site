@@ -21,6 +21,39 @@ export const dynamic = "force-dynamic";
 
 const REQUIRED_EMAIL = "boost.america@aharai.org.il";
 
+// פונקציית עזר קטנה לצבעים של הסטטוס
+function getStatusBadge(status: string) {
+  const s = (status || "new").toLowerCase();
+  let styles = "bg-gray-500/20 text-gray-300"; // default
+  
+  if (s === "new") styles = "bg-blue-500/20 text-blue-300 border-blue-500/30";
+  else if (s === "contacted") styles = "bg-yellow-500/20 text-yellow-300 border-yellow-500/30";
+  else if (s === "qualified") styles = "bg-green-500/20 text-green-300 border-green-500/30";
+  else if (s === "lost") styles = "bg-red-500/20 text-red-300 border-red-500/30";
+
+  return (
+    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${styles}`}>
+      {s.charAt(0).toUpperCase() + s.slice(1)}
+    </span>
+  );
+}
+
+// פונקציית עזר לצבעים של העדיפות
+function getPriorityBadge(priority: string) {
+  const p = (priority || "medium").toLowerCase();
+  let color = "text-gray-400";
+  
+  if (p === "high") color = "text-red-400 font-bold";
+  else if (p === "medium") color = "text-yellow-400";
+  else if (p === "low") color = "text-blue-400";
+
+  return (
+    <span className={`text-xs uppercase tracking-wider ${color}`}>
+      {p}
+    </span>
+  );
+}
+
 function getRequiredPassword() {
   // Keep the password out of the repo: set it in .env (ADMIN_PASSWORD).
   const pw = process.env.ADMIN_PASSWORD ?? null;
@@ -157,12 +190,12 @@ export default async function AdminLeadsPage({
 
   return (
     <main className='min-h-screen bg-black text-white'>
-      <div className='mx-auto max-w-6xl px-6 py-10'>
+      <div className='mx-auto max-w-[95%] px-4 py-10'>
         <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
           <div>
-            <h1 className='text-2xl font-semibold'>Leads</h1>
+            <h1 className='text-2xl font-semibold'>Leads CRM</h1>
             <p className='mt-1 text-sm text-white/70'>
-              Showing {leads.length} most recent leads.
+              Managing {leads.length} candidates.
             </p>
           </div>
           <form action={logoutAction}>
@@ -175,40 +208,86 @@ export default async function AdminLeadsPage({
           </form>
         </div>
 
-        <div className='mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5'>
+        <div className='mt-6 overflow-x-auto rounded-2xl border border-white/10 bg-white/5'>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Created</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Age</TableHead>
-                <TableHead>State</TableHead>
+              <TableRow className="border-white/10 hover:bg-white/5">
+                <TableHead className="w-[100px]">Status</TableHead>
+                <TableHead className="w-[80px]">Priority</TableHead>
+                <TableHead className="w-[120px]">Date</TableHead>
+                <TableHead>Full Name</TableHead>
+                <TableHead>Location</TableHead>
                 <TableHead>Source</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead className="w-[200px]">Message</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {leads.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className='py-10 text-center'>
+                  <TableCell colSpan={8} className='py-10 text-center text-white/50'>
                     No leads yet.
                   </TableCell>
                 </TableRow>
               ) : (
                 leads.map((lead, idx) => (
-                  <TableRow key={lead.id ?? idx}>
-                    <TableCell className='whitespace-nowrap'>
+                  <TableRow key={lead.id ?? idx} className="border-white/10 hover:bg-white/5">
+                    {/* Status Badge */}
+                    <TableCell>
+                      {getStatusBadge(lead.status)}
+                    </TableCell>
+                    
+                    {/* Priority Badge */}
+                    <TableCell>
+                      {getPriorityBadge(lead.priority)}
+                    </TableCell>
+
+                    {/* Date */}
+                    <TableCell className='whitespace-nowrap text-xs text-white/60'>
                       {lead.created_at
-                        ? new Date(lead.created_at).toLocaleString()
+                        ? new Date(lead.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })
                         : "—"}
                     </TableCell>
-                    <TableCell>{lead.full_name ?? "—"}</TableCell>
-                    <TableCell>{lead.email ?? "—"}</TableCell>
-                    <TableCell>{lead.phone ?? "—"}</TableCell>
-                    <TableCell>{lead.age ?? "—"}</TableCell>
-                    <TableCell>{lead.state ?? "—"}</TableCell>
-                    <TableCell>{lead.source ?? "—"}</TableCell>
+
+                    {/* Name & Age */}
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-white">{lead.full_name ?? "—"}</span>
+                        <span className="text-xs text-white/50">Age: {lead.age ?? "?"}</span>
+                      </div>
+                    </TableCell>
+
+                    {/* Location (City, Country) */}
+                    <TableCell>
+                      <div className="flex flex-col text-sm">
+                        <span>{lead.state ?? "—"}</span>
+                        <span className="text-xs text-white/50">{lead.country ?? ""}</span>
+                      </div>
+                    </TableCell>
+
+                    {/* Source */}
+                    <TableCell className="text-sm text-white/70">
+                      {lead.source ?? "—"}
+                    </TableCell>
+
+                    {/* Contact Info */}
+                    <TableCell>
+                      <div className="flex flex-col text-sm">
+                        <a href={`tel:${lead.phone}`} className="hover:text-[#fcd839] transition-colors">{lead.phone}</a>
+                        <a href={`mailto:${lead.email}`} className="text-xs text-white/50 hover:text-white transition-colors truncate max-w-[150px]">{lead.email}</a>
+                      </div>
+                    </TableCell>
+
+                    {/* Personal Message (Truncated) */}
+                    <TableCell>
+                       {lead.personal_message ? (
+                         <div className="max-w-[200px] truncate text-sm text-white/60" title={lead.personal_message}>
+                           {lead.personal_message}
+                         </div>
+                       ) : (
+                         <span className="text-white/20 text-xs">—</span>
+                       )}
+                    </TableCell>
                   </TableRow>
                 ))
               )}
