@@ -98,14 +98,18 @@ export default function CTASection() {
     setSubmitError(null);
     setStatus("idle");
 
-    // ולידציה בסיסית לשדות הקיימים
+    // === התיקון: אנחנו בודקים עכשיו את כל האובייקט המלא ===
     const parsed = LeadFormSchema.safeParse({
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
         age: formData.age,
-        state: formData.state, // ה-Schema הישנה אולי מצפה לזה
-        website: formData.website
+        state: formData.state,
+        website: formData.website,
+        // הוספנו את השדות החדשים לבדיקה כדי שלא ניכשל בולידציה
+        country: formData.country,
+        source: formData.source,
+        personal_message: formData.personal_message
     });
 
     if (!parsed.success) {
@@ -117,6 +121,10 @@ export default function CTASection() {
       });
       setErrors(nextErrors);
       setStatus("error");
+      
+      // הדפסה לקונסול כדי שתדע בדיוק איזה שדה חסר
+      console.log("Validation Failed:", fieldErrors);
+      
       toast.error(m.cta.errorAlert ?? "Something went wrong. Please check the form.");
       return;
     }
@@ -124,15 +132,8 @@ export default function CTASection() {
     try {
       setStatus("submitting");
       
-      // בניית האובייקט המלא לשליחה לשרת
-      const fullPayload = {
-        ...parsed.data, // השדות הבסיסיים המאומתים
-        country: formData.country,
-        source: formData.source,
-        personal_message: formData.personal_message // שולחים עם השם המדויק ב-DB
-      };
-
-      const res = await registerLead(fullPayload);
+      // אין צורך לבנות fullPayload מחדש, יש לנו את parsed.data
+      const res = await registerLead(parsed.data);
 
       if (!res.ok) {
         setSubmitError(m.cta.errorAlert ?? "Something went wrong.");
@@ -145,7 +146,6 @@ export default function CTASection() {
       setStatus("success");
       toast.success(m.cta.successAlert ?? "Thank you! We will be in touch soon.");
       
-      // איפוס הטופס
       setFormData({
         fullName: "",
         email: "",
