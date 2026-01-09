@@ -2,7 +2,7 @@
 import { ArrowRight } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n/useI18n";
-import { LeadFormSchema, type LeadFormParsed } from "@/lib/leads/schema";
+import { LeadFormSchema } from "@/lib/leads/schema"; // הורדתי את ה-Type המיותר
 import { toast } from "sonner";
 import { AsYouType } from "libphonenumber-js";
 import {
@@ -14,37 +14,38 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
+// הגדרת ה-Type המקומי עם שמות זהים ל-DB
 type LeadFormState = {
   fullName: string;
   email: string;
   phone: string;
   age: string;
-  state: string;
-  /** Honeypot (bots fill it). */
-  website: string;
+  country: string;        // תואם ל-DB
+  state: string;          // תואם ל-DB
+  source: string;         // תואם ל-DB
+  personal_message: string; // תואם ל-DB (עם קו תחתון)
+  website: string;        // Honeypot
 };
 
-type FieldErrors = Partial<Record<keyof LeadFormState, string>>;
+// רשימת מקורות הגעה
+const SOURCES = [
+  "Instagram",
+  "Facebook",
+  "Google Search",
+  "Friend / Family",
+  "Community Center",
+  "Other"
+];
 
-type ApiRegisterLeadResult =
-  | { ok: true; saved: true; emailSent: boolean }
-  | { ok: true; saved: false; emailSent: false } // honeypot
-  | { ok: false; error: "validation"; fieldErrors: Record<string, string[]> }
-  | { ok: false; error: "db" | "unknown" };
-
-async function registerLead(
-  payload: LeadFormParsed
-): Promise<ApiRegisterLeadResult> {
+async function registerLead(payload: any) {
   const res = await fetch("/api/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 
-  const json = (await res
-    .json()
-    .catch(() => null)) as ApiRegisterLeadResult | null;
-  if (!json || typeof (json as any).ok !== "boolean") {
+  const json = await res.json().catch(() => null);
+  if (!json || typeof json.ok !== "boolean") {
     return { ok: false, error: "unknown" };
   }
   return json;
@@ -52,25 +53,28 @@ async function registerLead(
 
 export default function CTASection() {
   const { m } = useI18n();
+  
   const [formData, setFormData] = useState<LeadFormState>({
     fullName: "",
     email: "",
     phone: "+1 ",
     age: "",
+    country: "",
     state: "",
+    source: "",
+    personal_message: "",
     website: ""
   });
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [status, setStatus] = useState<
-    "idle" | "submitting" | "success" | "error"
-  >("idle");
+
+  const [errors, setErrors] = useState<Partial<Record<keyof LeadFormState, string>>>({});
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const isSubmitting = status === "submitting";
   const canSubmit = useMemo(() => !isSubmitting, [isSubmitting]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setErrors((prev) => ({ ...prev, [name]: undefined }));
@@ -94,75 +98,70 @@ export default function CTASection() {
     setSubmitError(null);
     setStatus("idle");
 
-    const parsed = LeadFormSchema.safeParse(formData);
+    // ולידציה בסיסית לשדות הקיימים
+    const parsed = LeadFormSchema.safeParse({
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        age: formData.age,
+        state: formData.state, // ה-Schema הישנה אולי מצפה לזה
+        website: formData.website
+    });
+
     if (!parsed.success) {
       const fieldErrors = parsed.error.flatten().fieldErrors;
-      const nextErrors: FieldErrors = {};
-      (Object.keys(fieldErrors) as Array<keyof LeadFormState>).forEach((k) => {
-        const msg = fieldErrors[k]?.[0];
+      const nextErrors: any = {};
+      Object.keys(fieldErrors).forEach((k) => {
+        const msg = fieldErrors[k as keyof typeof fieldErrors]?.[0];
         if (msg) nextErrors[k] = msg;
       });
       setErrors(nextErrors);
       setStatus("error");
-      toast.error(
-        m.cta.errorAlert ?? "Something went wrong. Please try again."
-      );
+      toast.error(m.cta.errorAlert ?? "Something went wrong. Please check the form.");
       return;
     }
 
     try {
       setStatus("submitting");
-      const res = await registerLead(parsed.data);
+      
+      // בניית האובייקט המלא לשליחה לשרת
+      const fullPayload = {
+        ...parsed.data, // השדות הבסיסיים המאומתים
+        country: formData.country,
+        source: formData.source,
+        personal_message: formData.personal_message // שולחים עם השם המדויק ב-DB
+      };
+
+      const res = await registerLead(fullPayload);
 
       if (!res.ok) {
-        if (res.error === "validation") {
-          const nextErrors: FieldErrors = {};
-          (Object.keys(res.fieldErrors) as Array<keyof LeadFormState>).forEach(
-            (k) => {
-              const msg = res.fieldErrors[k]?.[0];
-              if (msg) nextErrors[k] = msg;
-            }
-          );
-          setErrors(nextErrors);
-          setStatus("error");
-          toast.error(
-            m.cta.errorAlert ?? "Something went wrong. Please try again."
-          );
-          return;
-        }
-
-        setSubmitError(
-          m.cta.errorAlert ?? "Something went wrong. Please try again."
-        );
+        setSubmitError(m.cta.errorAlert ?? "Something went wrong.");
         setStatus("error");
-        toast.error(
-          m.cta.errorAlert ?? "Something went wrong. Please try again."
-        );
+        toast.error(m.cta.errorAlert ?? "Something went wrong.");
         return;
       }
 
-      // Success (even if email fails, lead is saved)
+      // הצלחה!
       setStatus("success");
-      toast.success(
-        m.cta.successAlert ?? "Thank you! We will be in touch soon."
-      );
+      toast.success(m.cta.successAlert ?? "Thank you! We will be in touch soon.");
+      
+      // איפוס הטופס
       setFormData({
         fullName: "",
         email: "",
         phone: "+1 ",
         age: "",
+        country: "",
         state: "",
+        source: "",
+        personal_message: "",
         website: ""
       });
       setErrors({});
     } catch {
-      setSubmitError(
-        m.cta.errorAlert ?? "Something went wrong. Please try again."
-      );
+      setSubmitError(m.cta.errorAlert ?? "Connection error.");
       setStatus("error");
-      toast.error(
-        m.cta.errorAlert ?? "Something went wrong. Please try again."
-      );
+      toast.error(m.cta.errorAlert ?? "Connection error.");
     }
   };
 
@@ -180,7 +179,7 @@ export default function CTASection() {
         </p>
 
         <form onSubmit={handleSubmit} className='max-w-2xl mx-auto space-y-4'>
-          {/* Honeypot field (hidden from humans) */}
+          {/* Honeypot field */}
           <div className='hidden' aria-hidden='true'>
             <label>
               Website
@@ -195,6 +194,7 @@ export default function CTASection() {
             </label>
           </div>
 
+          {/* שורה 1: שם ואימייל */}
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div className='text-left'>
               <Input
@@ -207,9 +207,7 @@ export default function CTASection() {
                 required
                 aria-invalid={!!errors.fullName}
               />
-              {errors.fullName ? (
-                <p className='mt-1 text-sm text-red-300'>{errors.fullName}</p>
-              ) : null}
+              {errors.fullName ? <p className='mt-1 text-sm text-red-300'>{errors.fullName}</p> : null}
             </div>
             <div className='text-left'>
               <Input
@@ -222,12 +220,12 @@ export default function CTASection() {
                 required
                 aria-invalid={!!errors.email}
               />
-              {errors.email ? (
-                <p className='mt-1 text-sm text-red-300'>{errors.email}</p>
-              ) : null}
+              {errors.email ? <p className='mt-1 text-sm text-red-300'>{errors.email}</p> : null}
             </div>
           </div>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+
+          {/* שורה 2: טלפון וגיל */}
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div className='text-left'>
               <Input
                 type='tel'
@@ -240,9 +238,7 @@ export default function CTASection() {
                 required
                 aria-invalid={!!errors.phone}
               />
-              {errors.phone ? (
-                <p className='mt-1 text-sm text-red-300'>{errors.phone}</p>
-              ) : null}
+              {errors.phone ? <p className='mt-1 text-sm text-red-300'>{errors.phone}</p> : null}
             </div>
             <div className='text-left'>
               <Input
@@ -256,38 +252,97 @@ export default function CTASection() {
                 required
                 aria-invalid={!!errors.age}
               />
-              {errors.age ? (
-                <p className='mt-1 text-sm text-red-300'>{errors.age}</p>
-              ) : null}
+              {errors.age ? <p className='mt-1 text-sm text-red-300'>{errors.age}</p> : null}
             </div>
+          </div>
+
+          {/* שורה 3: מדינה ומיקום ספציפי */}
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div className='text-left'>
               <Select
-                value={formData.state}
+                value={formData.country}
                 onValueChange={(value) => {
-                  setErrors((prev) => ({ ...prev, state: undefined }));
-                  setFormData((prev) => ({ ...prev, state: value }));
+                  setErrors((prev) => ({ ...prev, country: undefined }));
+                  setFormData((prev) => ({ ...prev, country: value, state: "" }));
                 }}
               >
-                <SelectTrigger aria-invalid={!!errors.state}>
-                  <SelectValue placeholder={m.cta.form.placeholders.state} />
+                <SelectTrigger className="w-full bg-white/10 border-white/20 text-white placeholder:text-white/50">
+                  <SelectValue placeholder="Select Country" />
                 </SelectTrigger>
                 <SelectContent>
-                  {m.usStates.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
+                  <SelectItem value="USA">United States</SelectItem>
+                  <SelectItem value="Canada">Canada</SelectItem>
+                  <SelectItem value="Israel">Israel</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className='text-left'>
+               {formData.country === 'USA' ? (
+                  <Select
+                    value={formData.state}
+                    onValueChange={(value) => {
+                      setErrors((prev) => ({ ...prev, state: undefined }));
+                      setFormData((prev) => ({ ...prev, state: value }));
+                    }}
+                  >
+                    <SelectTrigger aria-invalid={!!errors.state}>
+                      <SelectValue placeholder={m.cta.form.placeholders.state} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {m.usStates.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+               ) : (
+                  <Input
+                    type='text'
+                    name='state'
+                    value={formData.state}
+                    placeholder={formData.country === 'Israel' ? "City (e.g. Tel Aviv)" : "City / Region"}
+                    onChange={handleChange}
+                    required={!!formData.country}
+                    disabled={!formData.country}
+                  />
+               )}
+              {errors.state ? <p className='mt-1 text-sm text-red-300'>{errors.state}</p> : null}
+            </div>
+          </div>
+
+          {/* שורה 4: מקור הגעה */}
+          <div className='text-left'>
+             <Select
+                value={formData.source}
+                onValueChange={(value) => {
+                  setFormData((prev) => ({ ...prev, source: value }));
+                }}
+              >
+                <SelectTrigger className="w-full bg-white/10 border-white/20 text-white placeholder:text-white/50">
+                  <SelectValue placeholder="How did you hear about us?" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SOURCES.map((s) => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {errors.state ? (
-                <p className='mt-1 text-sm text-red-300'>{errors.state}</p>
-              ) : null}
-            </div>
           </div>
-          {submitError ? (
-            <p className='text-sm text-red-300'>{submitError}</p>
-          ) : null}
-          {/* Success is shown via toast */}
+
+          {/* שורה 5: הודעה אישית */}
+          <div className='text-left'>
+            <textarea
+              name="personal_message"
+              rows={3}
+              value={formData.personal_message}
+              onChange={handleChange}
+              placeholder="Personal Message (Optional)..."
+              className="flex w-full rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#fcd839] focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+            />
+          </div>
+
+          {submitError ? <p className='text-sm text-red-300'>{submitError}</p> : null}
 
           <button
             type='submit'

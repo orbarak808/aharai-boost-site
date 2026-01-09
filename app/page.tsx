@@ -57,14 +57,14 @@ export default function Home() {
       <Navbar />
       <HeroSection />
 
+      {/* העברנו את הסקשן של אחריי לכאן - מיד אחרי ה-Hero */}
+      <AboutSection />
+
       <WhyUsSection />
 
       <ProgramTimeline />
 
-
       <SafetySection />
-
-      <AboutSection />
 
       <CTASection />
     </main>

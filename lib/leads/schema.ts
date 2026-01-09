@@ -16,7 +16,13 @@ export const LeadFormSchema = z.object({
     .transform((v) => Number(v))
     .refine((n) => Number.isInteger(n), "Age must be a whole number")
     .refine((n) => n >= 14 && n <= 99, "Age must be between 14 and 99"),
-  state: z.string().trim().min(2, "State is required").max(50),
+  
+  // === שדות חדשים שהוספנו לטופס ===
+  country: z.string().trim().min(1, "Country is required"), 
+  state: z.string().trim().min(2, "State/Region is required").max(50),
+  source: z.string().trim().min(1, "Please select a source"),
+  personal_message: z.string().trim().optional().default(""), // אופציונלי
+  
   /** Honeypot (bots fill it). Keep empty. */
   website: z.string().optional().default("")
 });
@@ -31,17 +37,27 @@ export const LeadPayloadSchema = z.object({
   email: z.string().trim().email(),
   phone: z.string().trim().min(6).max(30),
   age: z.number().int().min(14).max(99),
+  
+  // === שדות חדשים שהוספנו ל-API ===
+  country: z.string().trim().min(1),
   state: z.string().trim().min(2).max(50),
+  source: z.string().trim().min(1),
+  personal_message: z.string().trim().optional().default(""),
+  
   website: z.string().optional().default("")
 });
 
 export type LeadPayload = z.infer<typeof LeadPayloadSchema>;
 
+// עדכנו את הטיפוס הזה כדי שיתאים לטבלה החדשה ב-DB
 export type LeadInsert = {
   full_name: string;
   email: string;
   phone: string;
   age: number;
+  country: string;        // חדש
   state: string;
-  source: "website";
+  source: string;         // שינינו מ-"website" ל-string כדי לקבל כל מקור
+  personal_message: string; // חדש
+  // status, priority, internal_notes - מקבלים ברירת מחדל ב-DB ולכן לא חייבים להיות פה
 };

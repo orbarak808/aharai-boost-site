@@ -36,14 +36,18 @@ export default function Navbar() {
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center relative"> {/* הוספנו relative כדי שהמרכוז יעבוד */}
         
-        {/* 1. צד שמאל: לוגו */}
-        <Link href="/" className="relative z-10 flex items-center">
+    {/* 1. צד שמאל: לוגו */}
+    <Link href="/" className="relative z-10 flex items-center">
           <Image 
             src="/Transparent2.png" 
             alt={m.navbar.logoAlt} 
             width={300}
             height={150}
-            className="w-auto h-14 sm:h-16 md:h-24 object-contain"
+            className="w-auto h-16 sm:h-20 md:h-28 lg:h-36 object-contain transition-all duration-300"
+            // הקטנו משמעותית:
+            // מובייל: h-16 (במקום 24)
+            // טאבלט: h-28 (במקום 44)
+            // מחשב: h-36 (במקום 56) - זה הגודל הקובע אצלך בתמונה
             priority
           />
         </Link>

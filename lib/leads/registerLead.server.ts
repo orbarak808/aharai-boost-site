@@ -38,13 +38,20 @@ export async function registerLeadFromPayload(
   }
 
   const supabase = getSupabaseAdmin();
+  
+  // === השינוי הגדול: מיפוי השדות החדשים ל-DB ===
   const lead: LeadInsert = {
     full_name: payload.fullName,
     email: payload.email,
     phone: payload.phone,
     age: payload.age,
     state: payload.state,
-    source: "website"
+    
+    // השדות החדשים שיצרנו ב-Supabase:
+    country: payload.country,
+    // עכשיו זה דינמי (אינסטגרם, גוגל וכו') ולא סתם "website" קשיח
+    source: payload.source, 
+    personal_message: payload.personal_message
   };
 
   const { error } = await supabase.from("leads").insert(lead);

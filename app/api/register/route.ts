@@ -5,7 +5,9 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Backwards-compatible field mapping (in case other integrations post different keys)
+    console.log("🚀 Raw Incoming Body:", JSON.stringify(body)); // לוג לבדיקה
+
+    // הוספנו כאן את המיפוי של השדות החדשים
     const normalized = {
       fullName:
         body.fullName ??
@@ -17,10 +19,16 @@ export async function POST(request: Request) {
       phone: body.phone ?? body.tel ?? body.mobile ?? "",
       age: body.age ?? body.Age,
       state: body.state ?? body.region ?? "",
-      website: body.website ?? ""
+      website: body.website ?? "",
+      
+      // === הוספות חדשות ===
+      country: body.country ?? "",
+      source: body.source ?? "",
+      // כאן אנחנו מוודאים שאנחנו תופסים את זה גם אם נשלח כ-personalMessage וגם כ-personal_message
+      personal_message: body.personal_message ?? body.personalMessage ?? "" 
     };
 
-    console.log("🚀 Incoming Data:", JSON.stringify(normalized));
+    console.log("✅ Normalized Data to Save:", JSON.stringify(normalized));
 
     const result = await registerLeadFromUnknown(normalized);
 
