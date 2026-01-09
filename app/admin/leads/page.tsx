@@ -116,12 +116,6 @@ export default async function AdminLeadsPage({
                 Sign in
               </button>
             </form>
-
-            <p className='mt-4 text-xs text-white/50'>
-              Configure <code className='text-white/70'>ADMIN_PASSWORD</code>{" "}
-              (and optionally <code className='text-white/70'>ADMIN_EMAIL</code>
-              ) in your environment.
-            </p>
           </div>
         </div>
       </main>
