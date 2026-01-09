@@ -41,8 +41,8 @@ export default function Navbar() {
           <Image 
             src="/Transparent2.png" 
             alt={m.navbar.logoAlt} 
-            width={220}
-            height={90}
+            width={300}
+            height={150}
             className="w-auto h-14 sm:h-16 md:h-24 object-contain"
             priority
           />
