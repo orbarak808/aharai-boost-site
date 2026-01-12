@@ -4,6 +4,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n/useI18n";
 // שינינו את השם מ-supabase ל-supabaseClient
+import { submitLead } from "@/app/actions/submitLead";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 
@@ -37,26 +38,26 @@ export default function ContactSection() {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from('leads')
-        .insert([
-          {
-            full_name: formData.fullName,
-            email: formData.email,
-            phone: formData.phone,
-            age: formData.age,
-            country: formData.country,
-            state: formData.state,
-            city: formData.city,
-            referral_source: formData.referralSource,
-            message: formData.message,
-          }
-        ]);
+      // במקום לפנות ישירות ל-Supabase, אנחנו פונים ל-Action שלנו
+      const result = await submitLead({
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        age: formData.age,
+        country: formData.country,
+        state: formData.state,
+        city: formData.city,
+        source: formData.referralSource,
+        personal_message: formData.message
+      });
 
-      if (error) throw error;
+      if (!result.ok) {
+        throw new Error(result.error === "validation" ? "Please check your details" : "Server error");
+      }
 
       toast.success("Application sent successfully! We'll be in touch soon.");
       
+      // איפוס הטופס
       setFormData({
         fullName: "",
         email: "",
@@ -71,9 +72,7 @@ export default function ContactSection() {
 
     } catch (error: any) {
       console.error('Error submitting form:', error);
-      // השורה הזו תקפיץ חלונית עם פרטי השגיאה המדויקים
-      alert("Error: " + (error.message || JSON.stringify(error))); 
-      toast.error("Something went wrong. Please try again.");
+      toast.error(error.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
