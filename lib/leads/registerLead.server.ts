@@ -13,13 +13,13 @@ export type RegisterLeadResult =
 export async function registerLeadFromPayload(payload: LeadPayload) {
   // בדיקת בוטים (Honeypot)
   if (payload.website && payload.website.trim().length > 0) {
-    return { ok: true, saved: false, emailSent: false };
+    // הוספנו as const גם כאן ליתר ביטחון
+    return { ok: true as const, saved: false as const, emailSent: false };
   }
 
   const supabase = getSupabaseAdmin();
   
   // === יצירת האובייקט לשמירה ב-Supabase ===
-  // המיפוי: צד שמאל = שם העמודה ב-DB, צד ימין = המידע מהטופס
   const leadData: LeadInsert = {
     full_name: payload.fullName,
     email: payload.email,
@@ -28,8 +28,8 @@ export async function registerLeadFromPayload(payload: LeadPayload) {
     country: payload.country,
     state: payload.state,
     city: payload.city,
-    referral_source: payload.source,     // ב-DB זה referral_source
-    message: payload.personal_message,   // ב-DB זה message
+    referral_source: payload.source,     
+    message: payload.personal_message,   
   };
 
   // 1. שמירה ב-Supabase
@@ -57,17 +57,19 @@ export async function registerLeadFromPayload(payload: LeadPayload) {
     console.error("Email Sending Error:", e);
   }
 
-  return { ok: true, saved: true, emailSent };
+  // === התיקון הקריטי כאן ===
+  // השימוש ב-as const אומר ל-TypeScript: "אני מבטיח שזה true ולא סתם boolean"
+  return { ok: true as const, saved: true as const, emailSent };
 }
 
-// פונקציית העטיפה (אותה לא צריך לשנות כמעט)
+// פונקציית העטיפה
 export async function registerLeadFromUnknown(input: unknown): Promise<RegisterLeadResult> {
   const parsed = LeadPayloadSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: "validation", fieldErrors: parsed.error.flatten().fieldErrors };
   }
   try {
-    // @ts-ignore - TypeScript sometimes complains about the specific return type match, ignoring for safety
+    // @ts-ignore
     return await registerLeadFromPayload(parsed.data);
   } catch (e: any) {
     if (e.message === "db") return { ok: false, error: "db" };
