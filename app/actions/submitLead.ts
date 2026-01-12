@@ -10,21 +10,15 @@ export type SubmitLeadResult =
   | RegisterLeadResult
   | { ok: false; error: "validation"; fieldErrors: Record<string, string[]> };
 
-type LeadFormInput = {
-  fullName: string;
-  email: string;
-  phone: string;
-  age: string;
-  state: string;
-  website?: string;
-};
-
 export async function submitLead(
-  input: LeadFormInput
+  input: any // השתמשנו ב-any זמנית כדי למנוע בעיות של Type מול הטופס
 ): Promise<SubmitLeadResult> {
+  console.log("🚀 Server Action Triggered with input:", input);
+  
   try {
     const parsed = LeadFormSchema.safeParse(input);
     if (!parsed.success) {
+      console.log("❌ Validation failed:", parsed.error.flatten().fieldErrors);
       return {
         ok: false,
         error: "validation",
@@ -32,9 +26,13 @@ export async function submitLead(
       };
     }
 
-    // parsed.data.age is already transformed to number by LeadFormSchema
-    return await registerLeadFromPayload(parsed.data);
-  } catch {
+    console.log("✅ Validation passed, calling registerLeadFromPayload...");
+    const result = await registerLeadFromPayload(parsed.data);
+    console.log("🏁 Final result from server:", result);
+    return result;
+    
+  } catch (error) {
+    console.error("🔥 CRITICAL ACTION ERROR:", error);
     return { ok: false, error: "unknown" };
   }
 }
