@@ -10,17 +10,17 @@ export type RegisterLeadResult =
   | { ok: false; error: "validation"; fieldErrors: Record<string, string[]> }
   | { ok: false; error: "db" | "unknown" };
 
-// === התיקון כאן: הוספנו את : Promise<RegisterLeadResult> לכותרת ===
 export async function registerLeadFromPayload(payload: LeadPayload): Promise<RegisterLeadResult> {
   
-  // בדיקת בוטים (Honeypot)
+  // --- בדיקת בוטים (מנוטרלת זמנית לבדיקה) ---
+  /*
   if (payload.website && payload.website.trim().length > 0) {
     return { ok: true as const, saved: false as const, emailSent: false };
   }
+  */
 
   const supabase = getSupabaseAdmin();
   
-  // יצירת האובייקט לשמירה ב-Supabase
   const leadData: LeadInsert = {
     full_name: payload.fullName,
     email: payload.email,
@@ -41,8 +41,7 @@ export async function registerLeadFromPayload(payload: LeadPayload): Promise<Reg
     throw new Error("db");
   }
 
-  // 2. שליחת המייל
-  let emailSent = false;
+  // 2. שליחת המייל (עם מעקב שגיאות מחמיר)
   try {
     const res = await sendLeadWelcomeEmail({
       to: payload.email,
@@ -53,16 +52,28 @@ export async function registerLeadFromPayload(payload: LeadPayload): Promise<Reg
       source: payload.source,
       message: payload.personal_message
     });
-    emailSent = res.sent;
-  } catch (e) {
-    console.error("Email Sending Error:", e);
-  }
+    
+    if (!res.sent) {
+       // אם המייל חזר עם תשובה שלילית מהשרת
+       throw new Error(`Email provider failed to send: ${JSON.stringify(res)}`);
+    }
 
-  // החזרה סופית
-  return { ok: true as const, saved: true as const, emailSent };
+    return { ok: true as const, saved: true as const, emailSent: true };
+
+  } catch (e: any) {
+    // הדפסה מפורטת ללוגים של Vercel
+    console.error("!!! CRITICAL EMAIL ERROR !!!", {
+      message: e.message,
+      stack: e.stack,
+      env_user: process.env.GMAIL_USER ? "Defined" : "MISSING",
+      env_pass: process.env.GMAIL_APP_PASSWORD ? "Defined" : "MISSING"
+    });
+    
+    // זריקת השגיאה הלאה כדי שוורסל יציג "Error 500" והלוג יהיה אדום
+    throw e; 
+  }
 }
 
-// פונקציית העטיפה
 export async function registerLeadFromUnknown(input: unknown): Promise<RegisterLeadResult> {
   const parsed = LeadPayloadSchema.safeParse(input);
   if (!parsed.success) {
@@ -71,7 +82,9 @@ export async function registerLeadFromUnknown(input: unknown): Promise<RegisterL
   try {
     return await registerLeadFromPayload(parsed.data);
   } catch (e: any) {
+    console.error("Error in registerLeadFromUnknown:", e);
     if (e.message === "db") return { ok: false, error: "db" };
+    // אנחנו מחזירים unknown כדי שהמשתמש יראה הודעת שגיאה במקום "הצלחה" שקרית
     return { ok: false, error: "unknown" };
   }
 }
