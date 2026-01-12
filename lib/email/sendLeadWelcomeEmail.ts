@@ -3,7 +3,6 @@ import nodemailer from "nodemailer";
 interface EmailParams {
   to: string;
   fullName: string;
-  // פרמטרים נוספים לדיווח לאדמין
   phone?: string;
   age?: string;
   location?: string;
@@ -22,18 +21,16 @@ export async function sendLeadWelcomeEmail({
 }: EmailParams): Promise<{ sent: boolean }> {
   
   try {
+    // === שינוי כאן: מעבר לשיטת App Password פשוטה ויציבה ===
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        type: "OAuth2",
         user: process.env.GMAIL_USER,
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+        pass: process.env.GMAIL_APP_PASSWORD, // משתמש בסיסמה החדשה שהגדרת ב-Vercel
       },
     });
 
-    // 1. מייל למועמד (הודעה מעוצבת)
+    // 1. מייל למועמד
     const userHtml = `
       <div dir="ltr" style="font-family: sans-serif;">
         <h2>Hi ${fullName},</h2>
@@ -45,13 +42,13 @@ export async function sendLeadWelcomeEmail({
     `;
 
     await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+      from: `"Aharai! Boost" <${process.env.GMAIL_USER}>`,
       to: to,
       subject: "Welcome to Aharai! Boost 🚀",
       html: userHtml,
     });
 
-    // 2. מייל לאדמין (רק אם מוגדר ADMIN_EMAIL)
+    // 2. מייל לאדמין
     if (process.env.ADMIN_EMAIL) {
       const adminHtml = `
         <div dir="ltr">
@@ -67,7 +64,7 @@ export async function sendLeadWelcomeEmail({
       `;
 
       await transporter.sendMail({
-        from: process.env.GMAIL_USER,
+        from: `"System Alert" <${process.env.GMAIL_USER}>`,
         to: process.env.ADMIN_EMAIL,
         subject: `New Lead: ${fullName}`,
         html: adminHtml,
@@ -76,7 +73,8 @@ export async function sendLeadWelcomeEmail({
 
     return { sent: true };
   } catch (error) {
-    console.error("Email error:", error);
+    // הדפסת לוג מפורט ל-Vercel במקרה של תקלה
+    console.error("Critical Email Error:", error);
     return { sent: false };
   }
 }
