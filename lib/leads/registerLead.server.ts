@@ -10,16 +10,17 @@ export type RegisterLeadResult =
   | { ok: false; error: "validation"; fieldErrors: Record<string, string[]> }
   | { ok: false; error: "db" | "unknown" };
 
-export async function registerLeadFromPayload(payload: LeadPayload) {
+// === התיקון כאן: הוספנו את : Promise<RegisterLeadResult> לכותרת ===
+export async function registerLeadFromPayload(payload: LeadPayload): Promise<RegisterLeadResult> {
+  
   // בדיקת בוטים (Honeypot)
   if (payload.website && payload.website.trim().length > 0) {
-    // הוספנו as const גם כאן ליתר ביטחון
     return { ok: true as const, saved: false as const, emailSent: false };
   }
 
   const supabase = getSupabaseAdmin();
   
-  // === יצירת האובייקט לשמירה ב-Supabase ===
+  // יצירת האובייקט לשמירה ב-Supabase
   const leadData: LeadInsert = {
     full_name: payload.fullName,
     email: payload.email,
@@ -57,8 +58,7 @@ export async function registerLeadFromPayload(payload: LeadPayload) {
     console.error("Email Sending Error:", e);
   }
 
-  // === התיקון הקריטי כאן ===
-  // השימוש ב-as const אומר ל-TypeScript: "אני מבטיח שזה true ולא סתם boolean"
+  // החזרה סופית
   return { ok: true as const, saved: true as const, emailSent };
 }
 
@@ -69,7 +69,6 @@ export async function registerLeadFromUnknown(input: unknown): Promise<RegisterL
     return { ok: false, error: "validation", fieldErrors: parsed.error.flatten().fieldErrors };
   }
   try {
-    // @ts-ignore
     return await registerLeadFromPayload(parsed.data);
   } catch (e: any) {
     if (e.message === "db") return { ok: false, error: "db" };
