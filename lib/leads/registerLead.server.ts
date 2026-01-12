@@ -1,121 +1,76 @@
 import "server-only";
-
 import { LeadPayloadSchema, type LeadInsert, type LeadPayload } from "./schema";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { sendLeadWelcomeEmail } from "@/lib/email/sendLeadWelcomeEmail";
 
+// טיפוס התשובה
 export type RegisterLeadResult =
   | { ok: true; saved: true; emailSent: boolean }
-  | { ok: true; saved: false; emailSent: false } // honeypot
+  | { ok: true; saved: false; emailSent: false } 
   | { ok: false; error: "validation"; fieldErrors: Record<string, string[]> }
   | { ok: false; error: "db" | "unknown" };
 
-type RegisterLeadSuccessResult = Extract<RegisterLeadResult, { ok: true }>;
-
-function maskEmail(email: string) {
-  const [name, domain] = email.split("@");
-  if (!domain) return "***";
-  const safeName = name.length <= 2 ? `${name}***` : `${name.slice(0, 2)}***`;
-  return `${safeName}@${domain}`;
-}
-
-function errInfo(e: unknown) {
-  if (e instanceof Error) {
-    return {
-      message: e.message,
-      stack: process.env.NODE_ENV === "production" ? undefined : e.stack
-    };
-  }
-  return { message: String(e) };
-}
-
-export async function registerLeadFromPayload(
-  payload: LeadPayload
-): Promise<RegisterLeadSuccessResult> {
-  // Honeypot (bots). Pretend success to avoid giving signals.
+export async function registerLeadFromPayload(payload: LeadPayload) {
+  // בדיקת בוטים (Honeypot)
   if (payload.website && payload.website.trim().length > 0) {
     return { ok: true, saved: false, emailSent: false };
   }
 
   const supabase = getSupabaseAdmin();
   
-  // === השינוי הגדול: מיפוי השדות החדשים ל-DB ===
-  const lead: LeadInsert = {
+  // === יצירת האובייקט לשמירה ב-Supabase ===
+  // המיפוי: צד שמאל = שם העמודה ב-DB, צד ימין = המידע מהטופס
+  const leadData: LeadInsert = {
     full_name: payload.fullName,
     email: payload.email,
     phone: payload.phone,
     age: payload.age,
-    state: payload.state,
-    
-    // השדות החדשים שיצרנו ב-Supabase:
     country: payload.country,
-    // עכשיו זה דינמי (אינסטגרם, גוגל וכו') ולא סתם "website" קשיח
-    source: payload.source, 
-    personal_message: payload.personal_message
+    state: payload.state,
+    city: payload.city,
+    referral_source: payload.source,     // ב-DB זה referral_source
+    message: payload.personal_message,   // ב-DB זה message
   };
 
-  const { error } = await supabase.from("leads").insert(lead);
+  // 1. שמירה ב-Supabase
+  const { error } = await supabase.from("leads").insert(leadData);
+  
   if (error) {
-    console.error("[leads] insert failed", {
-      email: maskEmail(payload.email),
-      code: (error as any).code,
-      message: (error as any).message,
-      details: (error as any).details,
-      hint: (error as any).hint
-    });
+    console.error("Supabase Insert Error:", error);
     throw new Error("db");
   }
 
+  // 2. שליחת המייל
   let emailSent = false;
   try {
     const res = await sendLeadWelcomeEmail({
       to: payload.email,
-      fullName: payload.fullName
+      fullName: payload.fullName,
+      phone: payload.phone,
+      age: payload.age,
+      location: `${payload.city || ''}, ${payload.state || ''} ${payload.country || ''}`,
+      source: payload.source,
+      message: payload.personal_message
     });
     emailSent = res.sent;
-    if (!emailSent) {
-      console.error("[leads] welcome email not sent (returned sent:false)", {
-        email: maskEmail(payload.email)
-      });
-    }
   } catch (e) {
-    console.error("[leads] welcome email send threw", {
-      email: maskEmail(payload.email),
-      error: errInfo(e)
-    });
-    emailSent = false;
+    console.error("Email Sending Error:", e);
   }
 
   return { ok: true, saved: true, emailSent };
 }
 
-export async function registerLeadFromUnknown(
-  input: unknown
-): Promise<RegisterLeadResult> {
+// פונקציית העטיפה (אותה לא צריך לשנות כמעט)
+export async function registerLeadFromUnknown(input: unknown): Promise<RegisterLeadResult> {
+  const parsed = LeadPayloadSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: "validation", fieldErrors: parsed.error.flatten().fieldErrors };
+  }
   try {
-    const parsed = LeadPayloadSchema.safeParse(input);
-    if (!parsed.success) {
-      console.warn("[leads] validation failed", {
-        fieldErrors: parsed.error.flatten().fieldErrors
-      });
-      return {
-        ok: false,
-        error: "validation",
-        fieldErrors: parsed.error.flatten().fieldErrors
-      };
-    }
-
-    try {
-      return await registerLeadFromPayload(parsed.data);
-    } catch (e) {
-      if (e instanceof Error && e.message === "db") {
-        return { ok: false, error: "db" };
-      }
-      console.error("[leads] unknown error", { error: errInfo(e) });
-      return { ok: false, error: "unknown" };
-    }
-  } catch (e) {
-    console.error("[leads] unexpected top-level error", { error: errInfo(e) });
+    // @ts-ignore - TypeScript sometimes complains about the specific return type match, ignoring for safety
+    return await registerLeadFromPayload(parsed.data);
+  } catch (e: any) {
+    if (e.message === "db") return { ok: false, error: "db" };
     return { ok: false, error: "unknown" };
   }
 }

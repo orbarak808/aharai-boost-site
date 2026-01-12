@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import en from "@/lib/i18n/en.json";
 import SonnerToaster from "@/components/ui/SonnerToaster";
+import AccessibilityWidget from "@/components/ui/AccessibilityWidget"; // <-- הוספנו את זה
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         {children}
         <SonnerToaster />
+        <AccessibilityWidget /> {/* <-- הוספנו את זה כאן */}
       </body>
     </html>
   );

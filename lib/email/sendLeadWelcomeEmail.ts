@@ -1,136 +1,82 @@
-import "server-only";
+import nodemailer from "nodemailer";
 
-import {
-  leadWelcomeHtml,
-  leadWelcomeSubject
-} from "@/lib/email/templates/leadWelcome";
-
-type SendLeadWelcomeEmailArgs = {
+interface EmailParams {
   to: string;
   fullName: string;
-};
-
-/**
- * Sends a welcome email after a lead is saved.
- *
- * Gmail implementation via Nodemailer (server-side).
- * If not configured, it becomes a safe no-op (returns false).
- *
- * Best practices (per Nodemailer guidance):
- * - For Gmail, prefer OAuth2; if using a password, use a Google "App Password"
- *   (regular account password / "less secure apps" is not supported).
- * - Keep credentials in env vars; do not hardcode secrets.
- */
-export async function sendLeadWelcomeEmail({
-  to,
-  fullName
-}: SendLeadWelcomeEmailArgs) {
-  const transport = await getTransporter();
-  if (!transport) return { sent: false as const };
-
-  const from = resolveFromAddress();
-  if (!from) return { sent: false as const };
-
-  const subject = leadWelcomeSubject();
-  const html = leadWelcomeHtml({ fullName });
-
-  const info = await transport.sendMail({
-    from,
-    to,
-    subject,
-    html
-  });
-
-  if (!info.accepted || info.accepted.length === 0) {
-    throw new Error("Email send failed: message not accepted by SMTP server");
-  }
-
-  return { sent: true as const };
+  // פרמטרים נוספים לדיווח לאדמין
+  phone?: string;
+  age?: string;
+  location?: string;
+  source?: string;
+  message?: string;
 }
 
-let cachedTransporter: any | null = null;
-let cachedTransporterPromise: Promise<any | null> | null = null;
-
-function getNodemailer(): any | null {
+export async function sendLeadWelcomeEmail({ 
+  to, 
+  fullName, 
+  phone, 
+  age, 
+  location, 
+  source, 
+  message 
+}: EmailParams): Promise<{ sent: boolean }> {
+  
   try {
-    // Using require() avoids TS module-resolution issues in some Next/ESLint setups.
-    // This file is server-only and executed in the Node.js runtime.
-    return require("nodemailer");
-  } catch {
-    return null;
-  }
-}
-
-async function getTransporter(): Promise<any | null> {
-  if (cachedTransporter) return cachedTransporter;
-  if (cachedTransporterPromise) return cachedTransporterPromise;
-
-  cachedTransporterPromise = (async () => {
-    const transporter = buildGmailTransport();
-    if (!transporter) return null;
-
-    // "verify" is useful for early failure in dev and for debugging config issues.
-    // In serverless runtimes, verify adds latency; we only do it outside prod.
-    if (process.env.NODE_ENV !== "production") {
-      try {
-        await transporter.verify();
-      } catch {
-        return null;
-      }
-    }
-
-    cachedTransporter = transporter;
-    return transporter;
-  })();
-
-  return cachedTransporterPromise;
-}
-
-function resolveFromAddress() {
-  // Prefer explicit FROM; fall back to the Gmail auth user.
-  return (
-    process.env.MAIL_FROM ??
-    process.env.GMAIL_FROM ??
-    process.env.GMAIL_USER ??
-    process.env.NODEMAILER_USER ??
-    null
-  );
-}
-
-function buildGmailTransport(): any | null {
-  const nodemailer = getNodemailer();
-  if (!nodemailer) return null;
-
-  const user = process.env.GMAIL_USER ?? process.env.NODEMAILER_USER ?? null;
-  if (!user) return null;
-
-  // Preferred: OAuth2
-  const clientId = process.env.GOOGLE_CLIENT_ID ?? null;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET ?? null;
-  const refreshToken = process.env.GOOGLE_REFRESH_TOKEN ?? null;
-  if (clientId && clientSecret && refreshToken) {
-    return nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         type: "OAuth2",
-        user,
-        clientId,
-        clientSecret,
-        refreshToken
-      }
+        user: process.env.GMAIL_USER,
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+      },
     });
-  }
 
-  // Fallback: App Password (NOT your normal Gmail password).
-  const appPassword =
-    process.env.GMAIL_APP_PASSWORD ?? process.env.NODEMAILER_PASSWORD ?? null;
-  if (!appPassword) return null;
+    // 1. מייל למועמד (הודעה מעוצבת)
+    const userHtml = `
+      <div dir="ltr" style="font-family: sans-serif;">
+        <h2>Hi ${fullName},</h2>
+        <p>Thank you for applying to the <strong>Aharai! Boost Founding Cohort</strong>.</p>
+        <p>We have received your application and will review it shortly.</p>
+        <br>
+        <p>Best,<br>The Aharai! Boost Team</p>
+      </div>
+    `;
 
-  return nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user,
-      pass: appPassword
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
+      to: to,
+      subject: "Welcome to Aharai! Boost 🚀",
+      html: userHtml,
+    });
+
+    // 2. מייל לאדמין (רק אם מוגדר ADMIN_EMAIL)
+    if (process.env.ADMIN_EMAIL) {
+      const adminHtml = `
+        <div dir="ltr">
+          <h3>New Lead Alert 🚨</h3>
+          <p><strong>Name:</strong> ${fullName}</p>
+          <p><strong>Email:</strong> ${to}</p>
+          <p><strong>Phone:</strong> ${phone || '-'}</p>
+          <p><strong>Age:</strong> ${age || '-'}</p>
+          <p><strong>Location:</strong> ${location || '-'}</p>
+          <p><strong>Source:</strong> ${source || '-'}</p>
+          <p><strong>Message:</strong><br>${message || '-'}</p>
+        </div>
+      `;
+
+      await transporter.sendMail({
+        from: process.env.GMAIL_USER,
+        to: process.env.ADMIN_EMAIL,
+        subject: `New Lead: ${fullName}`,
+        html: adminHtml,
+      });
     }
-  });
+
+    return { sent: true };
+  } catch (error) {
+    console.error("Email error:", error);
+    return { sent: false };
+  }
 }

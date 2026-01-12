@@ -34,37 +34,23 @@ export default function Navbar() {
     <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
       scrolled ? 'bg-black/80 backdrop-blur-md py-2 border-b border-white/10' : 'bg-transparent py-4'
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center relative"> {/* הוספנו relative כדי שהמרכוז יעבוד */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center relative">
         
-    {/* 1. צד שמאל: לוגו */}
-    <Link href="/" className="relative z-10 flex items-center">
+        {/* 1. צד שמאל: לוגו */}
+        <Link href="/" className="relative z-10 flex items-center">
           <Image 
             src="/Transparent2.png" 
             alt={m.navbar.logoAlt} 
             width={300}
             height={150}
             className="w-auto h-16 sm:h-20 md:h-28 lg:h-36 object-contain transition-all duration-300"
-            // הקטנו משמעותית:
-            // מובייל: h-16 (במקום 24)
-            // טאבלט: h-28 (במקום 44)
-            // מחשב: h-36 (במקום 56) - זה הגודל הקובע אצלך בתמונה
             priority
           />
         </Link>
 
-        {/* 2. מרכז: תפריט ניווט (ממורכז אבסולוטית) */}
-        <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8">
-          {navLinks.map((link) => (
-            <Link 
-              key={link.name} 
-              href={link.href}
-              className="text-white font-medium hover:text-[#fcd839] transition-colors relative group py-2 whitespace-nowrap"
-            >
-              {link.name}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#fcd839] transition-all duration-300 group-hover:w-full" />
-            </Link>
-          ))}
-        </div>
+        {/* --- אזור הקישורים המרכזי נמחק מכאן --- 
+           ה-justify-between ידאג שהלוגו יהיה בשמאל והכפתורים בימין
+        */}
 
         {/* 3. צד ימין: אייקונים וכפתור */}
         <div className="hidden md:flex items-center gap-4 z-10">
@@ -107,7 +93,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - כאן השארנו את הקישורים שיהיה נוח לניווט בטלפון */}
       <AnimatePresence>
         {isOpen && (
           <motion.div

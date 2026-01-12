@@ -9,12 +9,14 @@
   }
 
   body {
-    @apply bg-ui-cream text-ui-night;
+    /* רקע שמנת וטקסט כהה - מותאם לצבעים החדשים */
+    @apply bg-aharai-cream text-aharai-dark;
   }
 
   h1,
   h2 {
-    @apply text-brand-forest;
+    /* התיקון: השתמשנו בשם החדש מהקונפיגורציה */
+    @apply text-aharai-forest;
   }
 }
 

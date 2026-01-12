@@ -6,32 +6,39 @@ import { Typewriter } from "@/components/ui/typewriter";
 
 export default function HeroSection() {
   const { m } = useI18n();
+  // הלינק לסרטון שלך מ-Supabase
+  const videoUrl = "https://iuotyzullakoanfcinic.supabase.co/storage/v1/object/public/assets/HeroLP.mp4";
+
   return (
     <section className="relative w-full min-h-[100svh] flex items-center justify-center overflow-hidden bg-[#0f172a] pt-28 pb-16 md:py-0">
       
-      {/* תמונת רקע - הוספנו טשטוש והגדלה קלה */}
-      <div 
-        className="absolute inset-0 z-0 blur-[3px] scale-110 transform" // <-- הנה הטשטוש
-        style={{
-          backgroundImage: "url('/hero-bg.jpg')", // וודא שהשם תואם לקובץ שלך ב-public
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+      {/* --- 1. שכבת הוידאו (במקום תמונת הרקע) --- */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        // טיפ: כדאי להוסיף כאן poster="/hero-bg.jpg" כדי למנוע הבהוב בטעינה ראשונית
       >
-        {/* השכבה שיוצרת את הצבע הירוק בצד אחד ואדום בצד שני */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1a4d2e]/90 to-[#450a0a]/80 mix-blend-multiply" />
-      </div>
+        <source src={videoUrl} type="video/mp4" />
+      </video>
 
-      {/* התוכן (לא מטושטש) */}
+      {/* --- 2. שכבת ה-Overlay (הגרדיאנט של המותג) --- */}
+      {/* הורדתי מעט את האטימות (מ-90 ל-80/70) כדי שיראו את הוידאו דרך הצבעים */}
+      <div className="absolute inset-0 z-1 bg-gradient-to-r from-[#1a4d2e]/80 to-[#450a0a]/70 mix-blend-multiply" />
+
+      {/* --- 3. התוכן (נשאר בדיוק כמו ששלחת לי) --- */}
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
         
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">
-          {m.hero.titleLines[0]} <br />
-          {m.hero.titleLines[1]}
+      <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-4 tracking-tight drop-shadow-lg max-w-6xl mx-auto">
+          {/* השינוי כאן: מחקנו את <br /> ושמנו רווח פשוט בין שני החלקים */}
+          {m.hero.titleLines[0]} {m.hero.titleLines[1]}
         </h1>
         
         <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#fcd839] mb-6 drop-shadow-md">
-          <Typewriter speed={85} startDelay={350} blinkCursor>
+          {/* התיקון: מחקנו את המילה blinkCursor מתוך התגית למטה */}
+          <Typewriter speed={85} startDelay={350}>
             {m.hero.tagline}
           </Typewriter>
         </h2>

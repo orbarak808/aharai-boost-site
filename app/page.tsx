@@ -2,11 +2,10 @@ import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
 import WhyUsSection from "@/components/landing/WhyUsSection";
 import ProgramTimeline from "@/components/landing/ProgramTimeline";
-import HighlightsSection from "@/components/landing/HighlightsSection";
 import SafetySection from "@/components/landing/SafetySection";
 import AboutSection from "@/components/landing/AboutSection";
-import CTASection from "@/components/landing/CTASection";
-import AnimatedDivBreathing from "@/components/ui/animated-div-breathing";
+import ContactSection from "@/components/landing/ContactSection"; // תיקנו את השם
+import Footer from "@/components/landing/Footer"; // הוספנו את הפוטר
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -53,7 +52,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className='min-h-screen bg-black text-white selection:bg-[#fcd839] selection:text-black'>
+    <main className='min-h-screen bg-aharai-cream text-aharai-dark selection:bg-aharai-yellow selection:text-aharai-dark'>
       <Navbar />
       <HeroSection />
 
@@ -66,7 +65,11 @@ export default function Home() {
 
       <SafetySection />
 
-      <CTASection />
+      {/* טופס ההרשמה */}
+      <ContactSection />
+      
+      {/* הפוטר - החלק התחתון השחור */}
+      <Footer />
     </main>
   );
 }
