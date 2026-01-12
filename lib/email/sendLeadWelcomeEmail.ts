@@ -20,17 +20,24 @@ export async function sendLeadWelcomeEmail({
   message 
 }: EmailParams): Promise<{ sent: boolean }> {
   
+  console.log("--- Starting Email Process ---");
+  console.log("Target Email:", to);
+  console.log("Using Gmail User:", process.env.GMAIL_USER);
+
   try {
-    // === שינוי כאן: מעבר לשיטת App Password פשוטה ויציבה ===
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD, // משתמש בסיסמה החדשה שהגדרת ב-Vercel
+        pass: process.env.GMAIL_APP_PASSWORD,
       },
     });
 
-    // 1. מייל למועמד
+    // בדיקת חיבור לשרת גוגל
+    console.log("Verifying connection to Gmail...");
+    await transporter.verify();
+    console.log("Gmail Connection Verified! ✅");
+
     const userHtml = `
       <div dir="ltr" style="font-family: sans-serif;">
         <h2>Hi ${fullName},</h2>
@@ -41,40 +48,33 @@ export async function sendLeadWelcomeEmail({
       </div>
     `;
 
-    await transporter.sendMail({
+    console.log("Attempting to send user email...");
+    const info = await transporter.sendMail({
       from: `"Aharai! Boost" <${process.env.GMAIL_USER}>`,
       to: to,
       subject: "Welcome to Aharai! Boost 🚀",
       html: userHtml,
     });
+    console.log("Email sent successfully! Message ID:", info.messageId);
 
-    // 2. מייל לאדמין
     if (process.env.ADMIN_EMAIL) {
-      const adminHtml = `
-        <div dir="ltr">
-          <h3>New Lead Alert 🚨</h3>
-          <p><strong>Name:</strong> ${fullName}</p>
-          <p><strong>Email:</strong> ${to}</p>
-          <p><strong>Phone:</strong> ${phone || '-'}</p>
-          <p><strong>Age:</strong> ${age || '-'}</p>
-          <p><strong>Location:</strong> ${location || '-'}</p>
-          <p><strong>Source:</strong> ${source || '-'}</p>
-          <p><strong>Message:</strong><br>${message || '-'}</p>
-        </div>
-      `;
-
+      console.log("Sending admin alert...");
       await transporter.sendMail({
         from: `"System Alert" <${process.env.GMAIL_USER}>`,
         to: process.env.ADMIN_EMAIL,
         subject: `New Lead: ${fullName}`,
-        html: adminHtml,
+        html: `<p>New lead from ${fullName}</p>`,
       });
     }
 
     return { sent: true };
-  } catch (error) {
-    // הדפסת לוג מפורט ל-Vercel במקרה של תקלה
-    console.error("Critical Email Error:", error);
+  } catch (error: any) {
+    // זה הלוג הכי חשוב - הוא יגיד לנו בדיוק מה גוגל ענה
+    console.error("!!! NODEMAILER FATAL ERROR !!!");
+    console.error("Error Message:", error.message);
+    console.error("Error Code:", error.code);
+    if (error.response) console.error("SMTP Response:", error.response);
+    
     return { sent: false };
   }
 }
