@@ -78,44 +78,48 @@ export default function FaqSection() {
   };
 
   return (
-    <section className="py-20 bg-gray-50 text-gray-800">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+    <section className="py-12 bg-transparent text-aharai-dark">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold mb-3">
             Frequently Asked Questions
           </h2>
-          <p className="text-lg text-gray-600">
+          <p className="text-gray-600">
             Everything you need to know about the journey
           </p>
         </div>
 
         <div className="space-y-8">
           {faqs.map((category, catIndex) => (
-            <div key={catIndex} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-              <h3 className="text-xl font-bold text-[#d32f2f] mb-4 border-b pb-2">
+            <div key={catIndex}>
+              {/* כותרת קטגוריה - קטנה ונקייה */}
+              <h3 className="text-lg font-bold text-[#d32f2f] mb-4 border-b border-gray-300 pb-2">
                 {category.category}
               </h3>
-              <div className="space-y-4">
+              
+              <div className="space-y-1">
                 {category.questions.map((item, qIndex) => {
                   const uniqueId = `${catIndex}-${qIndex}`;
                   const isOpen = openIndex === uniqueId;
 
                   return (
-                    <div key={qIndex} className="border rounded-lg overflow-hidden">
+                    <div key={qIndex} className="border-b border-gray-200 last:border-0">
                       <button
                         onClick={() => toggleFAQ(uniqueId)}
-                        className="w-full flex justify-between items-center p-4 text-left bg-gray-50 hover:bg-gray-100 transition-colors"
+                        className="w-full flex justify-between items-center py-3 text-left hover:text-[#d32f2f] transition-colors group"
                       >
-                        <span className="font-semibold text-gray-900">{item.q}</span>
+                        <span className="font-medium text-gray-900 group-hover:text-[#d32f2f] pr-4">
+                          {item.q}
+                        </span>
                         {isOpen ? (
-                          <ChevronUp className="w-5 h-5 text-gray-500" />
+                          <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0" />
                         ) : (
-                          <ChevronDown className="w-5 h-5 text-gray-500" />
+                          <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
                         )}
                       </button>
                       
                       {isOpen && (
-                        <div className="p-4 bg-white text-gray-600 leading-relaxed border-t">
+                        <div className="pb-4 text-gray-700 leading-relaxed text-sm md:text-base">
                           {item.a}
                         </div>
                       )}
