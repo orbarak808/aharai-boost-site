@@ -6,6 +6,7 @@ import SafetySection from "@/components/landing/SafetySection";
 import AboutSection from "@/components/landing/AboutSection";
 import ContactSection from "@/components/landing/ContactSection"; // תיקנו את השם
 import Footer from "@/components/landing/Footer"; // הוספנו את הפוטר
+import FaqSection from "@/components/landing/FaqSection";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
