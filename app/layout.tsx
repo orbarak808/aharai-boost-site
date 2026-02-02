@@ -3,7 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import en from "@/lib/i18n/en.json";
 import SonnerToaster from "@/components/ui/SonnerToaster";
-import AccessibilityWidget from "@/components/ui/AccessibilityWidget"; // <-- הוספנו את זה
+import AccessibilityWidget from "@/components/ui/AccessibilityWidget";
+import { LanguageProvider } from "@/context/LanguageContext"; // <-- הייבוא החדש
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,9 +21,12 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.className}>
-        {children}
-        <SonnerToaster />
-        <AccessibilityWidget /> {/* <-- הוספנו את זה כאן */}
+        {/* עטפנו את הכל ב-Provider כדי שהעברית תעבוד בכל האתר */}
+        <LanguageProvider>
+          {children}
+          <SonnerToaster />
+          <AccessibilityWidget />
+        </LanguageProvider>
       </body>
     </html>
   );
