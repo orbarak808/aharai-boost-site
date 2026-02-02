@@ -13,10 +13,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   const navLinks = [
-    { name: m.navbar.links.spirit, href: "#spirit" },
-    { name: m.navbar.links.journey, href: "#journey" },
-    { name: m.navbar.links.safety, href: "#safety" },
-    { name: m.navbar.links.about, href: "#about" }
+    { name: m.navbar.links.spirit, href: "/#spirit" }, // הוספתי / כדי שיעבוד גם מעמוד ה-FAQ
+    { name: m.navbar.links.journey, href: "/#journey" },
+    { name: m.navbar.links.safety, href: "/#safety" },
+    { name: m.navbar.links.about, href: "/#about" }
   ];
 
   const socialLinks = {
@@ -48,14 +48,19 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* --- אזור הקישורים המרכזי נמחק מכאן --- 
-           ה-justify-between ידאג שהלוגו יהיה בשמאל והכפתורים בימין
-        */}
-
-        {/* 3. צד ימין: אייקונים וכפתור */}
+        {/* 3. צד ימין: אייקונים, FAQ וכפתור */}
         <div className="hidden md:flex items-center gap-4 z-10">
+          
+          {/* הוספתי כאן את הקישור ל-FAQ */}
+          <Link 
+            href="/faq" 
+            className="text-white font-bold hover:text-[#fcd839] transition-colors mr-2 text-sm tracking-wide"
+          >
+            FAQ
+          </Link>
+
           {/* Social Icons */}
-          <div className="flex items-center gap-3 border-r border-white/20 pr-4 mr-1">
+          <div className="flex items-center gap-3 border-l border-white/20 pl-4 border-r pr-4 mr-1">
             <a
               href={socialLinks.instagram}
               target="_blank"
@@ -76,7 +81,7 @@ export default function Navbar() {
 
           {/* Apply Button */}
           <Link 
-            href="#apply"
+            href="/#apply"
             className="px-6 py-2.5 bg-[#fcd839] hover:bg-white text-black font-bold rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_15px_rgba(252,216,57,0.5)]"
           >
             {m.navbar.applyNow}
@@ -93,7 +98,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu Overlay - כאן השארנו את הקישורים שיהיה נוח לניווט בטלפון */}
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -114,6 +119,15 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
+
+              {/* הוספתי את ה-FAQ גם לתפריט המובייל */}
+              <Link 
+                href="/faq"
+                onClick={() => setIsOpen(false)}
+                className="text-2xl font-bold text-white hover:text-[#fcd839] transition-colors"
+              >
+                FAQ
+              </Link>
 
               <hr className="w-1/3 border-white/10 my-2" />
 
@@ -137,7 +151,7 @@ export default function Navbar() {
               </div>
               
               <Link 
-                href="#apply"
+                href="/#apply"
                 onClick={() => setIsOpen(false)}
                 className="mt-2 px-8 py-3 bg-[#fcd839] text-black font-bold rounded-full text-xl hover:bg-white transition-all w-3/4 text-center"
               >
