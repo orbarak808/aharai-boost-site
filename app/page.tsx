@@ -6,7 +6,6 @@ import SafetySection from "@/components/landing/SafetySection";
 import AboutSection from "@/components/landing/AboutSection";
 import ContactSection from "@/components/landing/ContactSection";
 import Footer from "@/components/landing/Footer";
-import FaqSection from "@/components/landing/FaqSection"; // הייבוא קיים, מצוין
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -57,7 +56,6 @@ export default function Home() {
       <Navbar />
       <HeroSection />
 
-      {/* העברנו את הסקשן של אחריי לכאן - מיד אחרי ה-Hero */}
       <AboutSection />
 
       <WhyUsSection />
@@ -66,13 +64,10 @@ export default function Home() {
 
       <SafetySection />
 
-      {/* הנה זה! הוספנו את ה-FAQ כאן */}
-      <FaqSection />
-
-      {/* טופס ההרשמה */}
       <ContactSection />
       
-      {/* הפוטר - החלק התחתון השחור */}
+      {/* זהו! מחקנו את ה-FAQ מכאן סופית */}
+      
       <Footer />
     </main>
   );
