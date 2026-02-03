@@ -44,15 +44,15 @@ export default function HeroSection() {
           ))}
         </div>
 
-        {/* --- השינוי כאן: החלפנו את metaLine בבלוק המידע החדש --- */}
+        {/* --- המידע המעודכן --- */}
         <div className="flex flex-col items-center space-y-2 mb-10">
             {/* שורת התאריכים */}
             <p className="font-bold text-white tracking-wide uppercase text-sm md:text-base drop-shadow-md">
               6 WEEKS | JULY 1ST - AUGUST 10TH
             </p>
-            {/* שורת קהל היעד - בצהוב */}
+            {/* שורת קהל היעד - עודכן עם Juniors ('27) */}
             <p className="text-[#fcd839] font-bold text-lg sm:text-xl tracking-tight drop-shadow-md">
-              Open to High School Seniors (Class of '26) & College Freshmen
+              Open to High School Juniors ('27), Seniors ('26) & College Freshmen
             </p>
         </div>
 
