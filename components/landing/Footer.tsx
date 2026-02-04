@@ -72,7 +72,7 @@ export default function Footer() {
         {/* זכויות יוצרים */}
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
           <p>© {currentYear} Aharai! Boost. All rights reserved.</p>
-          <p>Built with ❤️ in Israel.</p>
+          <p>Built with ❤️ </p>
         </div>
       </div>
     </footer>
