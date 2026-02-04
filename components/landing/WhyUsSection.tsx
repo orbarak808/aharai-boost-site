@@ -22,7 +22,7 @@ export default function WhyUsSection() {
     {
       title: "A Home for Everyone",
       // --- התיקון כאן ---
-      description: "We bring together youth from every corner of society. Here, labels disappear, and you become part of one shared family.",
+      description: "We bring together youth from every corner of society! Here, labels disappear, and you become part of one shared family.",
       icon: HeartHandshake
     },
     {
