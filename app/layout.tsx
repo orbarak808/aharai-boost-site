@@ -4,7 +4,8 @@ import "./globals.css";
 import en from "@/lib/i18n/en.json";
 import SonnerToaster from "@/components/ui/SonnerToaster";
 import AccessibilityWidget from "@/components/ui/AccessibilityWidget";
-import { LanguageProvider } from "@/context/LanguageContext"; // <-- הייבוא החדש
+import { LanguageProvider } from "@/context/LanguageContext";
+import { Analytics } from "@vercel/analytics/react"; // <-- הייבוא החדש של הסטטיסטיקות
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({
           {children}
           <SonnerToaster />
           <AccessibilityWidget />
+          <Analytics /> {/* <-- הרכיב שאוסף את הנתונים */}
         </LanguageProvider>
       </body>
     </html>
