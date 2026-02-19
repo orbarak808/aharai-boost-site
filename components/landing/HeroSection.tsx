@@ -28,6 +28,19 @@ export default function HeroSection() {
       {/* --- 3. התוכן --- */}
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
         
+        {/* === התוספת: כפתור הפניה לוובינר === */}
+        <Link 
+          href="#webinar" 
+          className="inline-flex items-center gap-2 px-5 py-2 mb-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white text-sm md:text-base font-medium transition-all backdrop-blur-md shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+        >
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
+          </span>
+          Free Live Webinar | March 8th, 8:00 PM (ET) <ArrowRight className="w-4 h-4" />
+        </Link>
+        {/* ======================================= */}
+
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-4 tracking-tight drop-shadow-lg max-w-6xl mx-auto">
           {m.hero.titleLines[0]} {m.hero.titleLines[1]}
         </h1>
