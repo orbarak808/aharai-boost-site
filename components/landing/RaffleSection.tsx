@@ -5,10 +5,11 @@ export default function RaffleSection() {
       <section id="raffle-section" className="bg-[#00504a] text-white py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-extrabold text-[#fcd839] mb-4">
-            Join the Tribe. Win $100.
+            Join the Tribe - Win $100
           </h2>
           <p className="text-lg md:text-xl mb-10">
-            We are building a community of leaders. Complete the 3 steps below to enter the raffle for a $100 Amazon Gift Card.
+            We are building a community of leaders.<br />
+            Complete the 3 steps below to enter the raffle for a $100 Amazon Gift Card.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">

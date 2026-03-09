@@ -1,4 +1,5 @@
 "use client";
+
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n/useI18n";
@@ -31,7 +32,7 @@ export default function HeroSection() {
         {/* === אזור הכפתורים העליונים (וובינר + הגרלה) === */}
         <div className="flex flex-col items-center justify-center gap-3 mb-8">
           
-          {/* כפתור הוובינר (נשמר כפי שביקשת) */}
+          {/* כפתור הוובינר המעודכן ל-15 במרץ */}
           <Link 
             href="#webinar" 
             className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white text-sm md:text-base font-medium transition-all backdrop-blur-md shadow-lg hover:shadow-xl hover:-translate-y-0.5"
@@ -40,7 +41,7 @@ export default function HeroSection() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
             </span>
-            Free Live Webinar | March 8th, 8:00 PM (ET) <ArrowRight className="w-4 h-4" />
+            Free Live Webinar | March 15th, 8:00 PM (ET) <ArrowRight className="w-4 h-4" />
           </Link>
 
           {/* כפתור ההגרלה החדש */}
