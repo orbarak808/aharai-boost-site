@@ -1,6 +1,6 @@
 import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
-import WebinarRegistration from "@/components/WebinarRegistration"; // הייבוא החדש של הוובינר
+import RaffleSection from "@/components/landing/RaffleSection"; // הייבוא החדש של ההגרלה במקום הוובינר
 import WhyUsSection from "@/components/landing/WhyUsSection";
 import ProgramTimeline from "@/components/landing/ProgramTimeline";
 import SafetySection from "@/components/landing/SafetySection";
@@ -57,9 +57,9 @@ export default function Home() {
       <Navbar />
       <HeroSection />
 
-      {/* --- אזור הוובינר החדש --- */}
-      <div id="webinar" className="scroll-mt-20"> 
-        <WebinarRegistration />
+      {/* --- אזור ההגרלה החדש --- */}
+      <div id="raffle" className="scroll-mt-20"> 
+        <RaffleSection />
       </div>
 
       <AboutSection />
