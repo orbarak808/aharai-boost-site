@@ -13,7 +13,7 @@ export default function WebinarSection() {
           
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[650px] border-4 border-[#fcd839]/20">
             <iframe
-              src="https://lu.ma/embed/event/evt-ZyZ4Tv5uVY76nrG/checkout"
+              src="https://lu.ma/embed/event/nhvtrvb7"
               width="100%"
               height="650"
               frameBorder="0"
