@@ -1,6 +1,7 @@
 import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
-import RaffleSection from "@/components/landing/RaffleSection"; // הייבוא החדש של ההגרלה במקום הוובינר
+import WebinarSection from "@/components/landing/WebinarSection"; // הייבוא החדש לוובינר
+import RaffleSection from "@/components/landing/RaffleSection";
 import WhyUsSection from "@/components/landing/WhyUsSection";
 import ProgramTimeline from "@/components/landing/ProgramTimeline";
 import SafetySection from "@/components/landing/SafetySection";
@@ -57,7 +58,10 @@ export default function Home() {
       <Navbar />
       <HeroSection />
 
-      {/* --- אזור ההגרלה החדש --- */}
+      {/* --- אזור הוובינר החדש - מוטמע ישירות מתחת ל-Hero --- */}
+      <WebinarSection />
+
+      {/* --- אזור ההגרלה --- */}
       <div id="raffle" className="scroll-mt-20"> 
         <RaffleSection />
       </div>
@@ -71,8 +75,6 @@ export default function Home() {
       <SafetySection />
 
       <ContactSection />
-      
-      {/* זהו! מחקנו את ה-FAQ מכאן סופית */}
       
       <Footer />
     </main>
